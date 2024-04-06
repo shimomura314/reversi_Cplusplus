@@ -11,7 +11,7 @@
 class Minmax : public BaseStrategy
 {
 private:
-    std::array<int, 64> EVAL_TBL1 = {
+    constexpr static std::array<int, 64> EVAL_TBL1 = {
         30,  -12,   0,  -1,  -1,   0, -12,  30,
         -12, -15,  -3,  -3,  -3,  -3, -15, -12,
         0,    -3,   0,  -1,  -1,   0,  -3,   0,
@@ -21,7 +21,7 @@ private:
         -12, -15,  -3,  -3,  -3,  -3, -15, -12,
         30,  -12,   0,  -1,  -1,   0, -12,  30,
     };
-    std::array<int, 64> EVAL_TBL2 = {
+    constexpr static std::array<int, 64> EVAL_TBL2 = {
         120, -20,  20,   5,   5,  20, -20, 120,
         -20, -40,  -5,  -5,  -5,  -5, -40, -20,
         20,   -5,  15,   3,   3,  15,  -5,  20,
@@ -33,7 +33,7 @@ private:
     };
 
     // High speed computation
-    std::array<uint64_t, 64> EXP2 = {
+    constexpr static std::array<uint64_t, 64> EXP2 = {
         0x1, 0x2, 0x4, 0x8,
         0x10, 0x20, 0x40, 0x80,
         0x100, 0x200, 0x400, 0x800,

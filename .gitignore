@@ -1,4 +1,5 @@
 *.pkl
 *.prof
+*.o
 __pycache__
 /build
