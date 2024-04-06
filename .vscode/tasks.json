@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build othello.cpp (make)",
+            "type": "shell",
+            "command": "mingw32-make",
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}/"
+            },
+            "group": "build"
+        },
+        {
+            "label": "Build othello.cpp (make clean)",
+            "type": "shell",
+            "command": "mingw32-make",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/"
+            },
+            "group": "build"
+        },
+    ]
+}
