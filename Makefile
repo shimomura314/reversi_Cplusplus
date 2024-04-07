@@ -18,8 +18,10 @@ LIBS   = -lpython39
 
 SRCS_matching    =  $(wildcard bitboard/*.cpp strategy/*.cpp matching/*.cpp)
 OBJS_matching    =  $(SRCS_matching:.cpp=.o)
+# -pgによりファイル実行時にgmon.outが生成される．
+# gprof matching.exe gmon.out > gmon.txt
 matching: $(OBJS_matching)
-	$(CC) -o $@ $^ $(LIBDIR) $(LIBS)
+	$(CC) -pg -o $@ $^ $(LIBDIR) $(LIBS)
 
 # 汎用的な.cppから.oへの変換ルール
 INCDIR  =  -Ibitboard -Istrategy $(shell python -m pybind11 --includes)
