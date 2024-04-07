@@ -3,8 +3,9 @@
 EloRating::EloRating() {
     std::ifstream file(filename);
     if (!file) {
-            return;
-        }
+        std::cout << "Constructor: File was not found." << std::endl;
+        return;
+    }
     std::string line;
     while (std::getline(file, line)) {
         std::istringstream iss(line);
@@ -14,6 +15,7 @@ EloRating::EloRating() {
             rating[key] = value;
         }
     }
+    std::cout << "Constructor: File found." << std::endl;
     file.close();
 }
 
@@ -24,7 +26,7 @@ EloRating::~EloRating() {
 
 void EloRating::update(
         const std::string& member1, const std::string& member2,
-        const int game_number, const int cnt_mbr1_win) {
+        const int game_number, const float cnt_mbr1_win) {
     int cnt_mbr2_win = game_number - cnt_mbr1_win;
 
     if (rating.find(member1) == rating.end()) {

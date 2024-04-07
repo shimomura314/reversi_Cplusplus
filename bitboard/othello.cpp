@@ -78,10 +78,3 @@ tuple<bool, bool> Othello::process_game() {
         return forward_as_tuple(false, false);
     }
 }
-
-int main() {
-}
-
-// PYBIND11_MODULE(my_module, module) {
-//     module.def("Main", &main); // 関数のバインド
-// }

@@ -32,20 +32,20 @@ uint8_t BitBoard::bit_count(uint64_t x) {
     >>> game._bit_count(0x0000000810000000ULL)
     3
     */
-    // // Distributing by 2-bit, express the number of bits using 2-bit.
-    // x -= (x >> 1) & 0x5555555555555555ULL;
-    // // Upper 2-bit + lower 2-bit.
-    // x = (x & 0x3333333333333333ULL) + ((x >> 2) & 0x3333333333333333ULL);
-    // // Upper 4-bit + lower 4-bit.
-    // x = (x + (x >> 4)) & 0x0f0f0f0f0f0f0f0fULL;
-    // // Upper 8-bit + lower 8-bit.
-    // x += x >> 8;
-    // // Upper 16-bit + lower 16-bit.
-    // x += x >> 16;
-    // // Upper 32-bit + lower 32-bit.
-    // x += x >> 32;
-    // return uint8_t(x & 0x0000007f);
-    return __builtin_popcountll(x);
+    // Distributing by 2-bit, express the number of bits using 2-bit.
+    x -= (x >> 1) & 0x5555555555555555ULL;
+    // Upper 2-bit + lower 2-bit.
+    x = (x & 0x3333333333333333ULL) + ((x >> 2) & 0x3333333333333333ULL);
+    // Upper 4-bit + lower 4-bit.
+    x = (x + (x >> 4)) & 0x0f0f0f0f0f0f0f0fULL;
+    // Upper 8-bit + lower 8-bit.
+    x += x >> 8;
+    // Upper 16-bit + lower 16-bit.
+    x += x >> 16;
+    // Upper 32-bit + lower 32-bit.
+    x += x >> 32;
+    return uint8_t(x & 0x0000007f);
+    // return __builtin_popcountll(x);
 }
 
 uint64_t BitBoard::check_surround(uint64_t x, uint8_t direction) {

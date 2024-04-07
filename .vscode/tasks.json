@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build othello.cpp (make)",
+            "label": "Build matching.cpp (make)",
             "type": "shell",
             "command": "mingw32-make",
             "args": [],
@@ -12,7 +12,7 @@
             "group": "build"
         },
         {
-            "label": "Build othello.cpp (make clean)",
+            "label": "Build matching.cpp (make clean)",
             "type": "shell",
             "command": "mingw32-make",
             "args": [

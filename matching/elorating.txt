@@ -1,0 +1,6 @@
+minmax4 1700.47
+minmax6 1675.95
+minimize 1548
+minmax 1639.22
+maximize 1500.22
+random 1536.14

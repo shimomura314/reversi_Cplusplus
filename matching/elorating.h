@@ -1,11 +1,11 @@
 #ifndef ERORATING_H
 #define ERORATING_H
 
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
+#include <cmath>
 
 class EloRating
 {
@@ -20,7 +20,7 @@ public:
     ~EloRating();
     void update(
         const std::string& member1, const std::string& member2,
-        const int game_number, const int cnt_mbr1_win);
+        const int game_number, const float cnt_mbr1_win);
     void reset();
     void save();
     void print();
