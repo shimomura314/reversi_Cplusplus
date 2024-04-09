@@ -4,10 +4,6 @@
 #include "basestrategy.h"
 #include "../bitboard/bitboard.h"
 
-#include <iostream>
-#include <array>
-#include <vector>
-
 class Minmax : public BaseStrategy
 {
 private:
@@ -54,13 +50,13 @@ private:
     uint8_t depth;
     uint8_t player_clr;
 
-    bool touch_border(uint64_t b_board, uint64_t w_board);
-    int evaluate_value(uint64_t b_board, uint64_t w_board);
-    tuple<int, int> min_max(
-        uint8_t turn_, uint64_t b_board, uint64_t w_board,
+    bool touch_border(BitBoard::Boards boards);
+    int evaluate_value(BitBoard::Boards boards);
+    std::tuple<int, int> min_max(
+        uint8_t turn_, BitBoard::Boards boards,
         uint8_t depth_, int pre_evaluation);
-    tuple<int, int> min_max_debug(
-        uint8_t turn_, uint64_t b_board, uint64_t w_board,
+    std::tuple<int, int> min_max_debug(
+        uint8_t turn_, BitBoard::Boards boards,
         uint8_t depth_, int pre_evaluation);
 public:
     Minmax(uint8_t d = 2);

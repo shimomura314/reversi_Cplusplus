@@ -1,7 +1,6 @@
 #ifndef BASESTRATEGY_H
 #define BASESTRATEGY_H
 
-#include <iostream>
 #include "../bitboard/bitboard.h"
 
 class BaseStrategy {

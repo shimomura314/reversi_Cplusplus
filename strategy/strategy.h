@@ -8,7 +8,6 @@
 #include "minimize.h"
 #include "minmax.h"
 
-#include <iostream>
 #include <memory>
 #include <string>
 

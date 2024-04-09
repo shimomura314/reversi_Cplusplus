@@ -23,24 +23,24 @@ uint8_t Minimize::move(const BitBoard& board) {
     --------
     int : the index of the chosen move
     */
-    uint64_t b_board, w_board;
-    tie(b_board, w_board) = board.return_board();
+    BitBoard::Boards present_boards;
+    present_boards = board.return_board();
     uint8_t turn = board.return_turn();
-    vector<uint8_t> candidates = board.reversible_area_list(turn, b_board, w_board);
-    vector<uint8_t> min_strategy;
+    std::vector<uint8_t> candidates = board.reversible_area_list(turn, present_boards);
+    std::vector<uint8_t> min_strategy;
     uint8_t min_merit = 255;
 
-    tuple<uint64_t, uint64_t> new_board;
-    tuple<uint8_t, uint8_t> counter;
+    BitBoard::Boards new_boards;
+    std::tuple<uint8_t, uint8_t> counter;
     uint8_t myNum;
 
     for (auto candidate: candidates) {
-        new_board = board.simulate_play(turn, candidate, b_board, w_board);
-        counter = board.count_disks(get<0>(new_board), get<1>(new_board));
+        new_boards = board.simulate_play(turn, candidate, present_boards);
+        counter = board.count_disks(new_boards);
         if (turn == 0) {
-            myNum = get<0>(counter);
+            myNum = std::get<0>(counter);
         } else {
-            myNum = get<1>(counter);
+            myNum = std::get<1>(counter);
         }
 
         if (min_merit > myNum) {

@@ -18,7 +18,13 @@ LIBS   = -lpython39
 
 SRCS_matching    =  $(wildcard bitboard/*.cpp strategy/*.cpp matching/*.cpp)
 OBJS_matching    =  $(SRCS_matching:.cpp=.o)
-# -pgによりファイル実行時にgmon.outが生成される．
+# matching: $(OBJS_matching)
+# 	$(CC) -o $@ $^ $(LIBDIR) $(LIBS)
+# -p: prof用．ファイル実行時にmon.outが生成される．
+# prof matching.exe > mon.txt
+# matching: $(OBJS_matching)
+# 	$(CC) -p -o $@ $^ $(LIBDIR) $(LIBS)  
+# -pg: gprof用．ファイル実行時にgmon.outが生成される．
 # gprof matching.exe gmon.out > gmon.txt
 matching: $(OBJS_matching)
 	$(CC) -pg -o $@ $^ $(LIBDIR) $(LIBS)
@@ -27,7 +33,7 @@ matching: $(OBJS_matching)
 INCDIR  =  -Ibitboard -Istrategy $(shell python -m pybind11 --includes)
 INCDIR  += -IC:/Users/shimomura/anaconda3/include
 %.o: %.cpp
-	$(CC) $(CFLAGS) $(INCDIR) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCDIR) -c -pg $< -o $@
 
 # 'clean' ターゲットの定義
 # clean:

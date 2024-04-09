@@ -4,14 +4,11 @@
 #include "basestrategy.h"
 #include "../bitboard/bitboard.h"
 
-#include <iostream>
-#include <vector>
-
 class Minimize : public BaseStrategy
 {
 private:
 public:
-    uint8_t move(const BitBoard& board);
+    uint8_t move(const BitBoard& board) override;
 };
 
 #endif  // #ifndef MINIMIZE_H

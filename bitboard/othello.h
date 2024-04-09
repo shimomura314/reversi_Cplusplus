@@ -19,7 +19,7 @@ public:
     uint8_t return_player_clr() const;
     void change_strategy(const std::string& strategy, bool is_player = false);
     void change_player(uint8_t color);
-    tuple<bool, bool> process_game();
+    std::tuple<bool, bool> process_game();
 };
 
 #endif  // #ifndef OTHELLO_H

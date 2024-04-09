@@ -18,24 +18,21 @@ PYBIND11_MODULE(othello, m) {
             "check_surround", 
             &BitBoard::check_surround, py::arg("x"), py::arg("direction"))
         .def_static(
-            "count_disks", &BitBoard::count_disks,
-            py::arg("b_board"), py::arg("w_board"))
+            "count_disks", &BitBoard::count_disks, py::arg("boards"))
         .def_static(
             "reversible_area", &BitBoard::reversible_area,
-            py::arg("turn"), py::arg("b_board"), py::arg("w_board"))
+            py::arg("turn"), py::arg("boards"))
         .def_static(
             "reversible_area_list", &BitBoard::reversible_area_list,
-            py::arg("turn"), py::arg("b_board"), py::arg("w_board"))
+            py::arg("turn"), py::arg("boards"))
         .def_static(
             "is_reversible", &BitBoard::is_reversible,
-            py::arg("put_loc"), py::arg("turn"),
-            py::arg("b_board"), py::arg("w_board"))
+            py::arg("put_loc"), py::arg("turn"), py::arg("boards"))
         .def_static(
             "turn_playable", &BitBoard::turn_playable,
-            py::arg("turn"), py::arg("b_board"), py::arg("w_board"))
+            py::arg("turn"), py::arg("boards"))
         .def_static(
-            "judge_game", &BitBoard::judge_game,
-            py::arg("b_board"), py::arg("w_board"))
+            "judge_game", &BitBoard::judge_game, py::arg("boards"))
 
         .def("return_board", &BitBoard::return_board)
         .def("return_turn", &BitBoard::return_turn)
@@ -43,7 +40,7 @@ PYBIND11_MODULE(othello, m) {
         .def("display_board", &BitBoard::display_board)
         .def(
             "load_board", &BitBoard::load_board,
-            py::arg("b_board"), py::arg("w_board"))
+            py::arg("boards"))
         .def("load_state", &BitBoard::load_state)
         .def("save_state", &BitBoard::save_state)
         .def("undo_turn", &BitBoard::undo_turn)
@@ -51,12 +48,16 @@ PYBIND11_MODULE(othello, m) {
 
         .def_static(
             "simulate_play", &BitBoard::simulate_play,
-            py::arg("turn"), py::arg("put_loc"),
-            py::arg("b_board"), py::arg("w_board"))
+            py::arg("turn"), py::arg("put_loc"), py::arg("boards"))
         .def("play_turn", &BitBoard::play_turn, py::arg("put_loc"))
         .def("skip_turn", &BitBoard::skip_turn)
         .def("update_count", &BitBoard::update_count)
         .def("auto_mode", &BitBoard::auto_mode, py::arg("automode") = true)
+        ;
+
+    py::class_<BitBoard::Boards>(m, "MyStruct")
+        .def_readwrite("black", &BitBoard::Boards::black)
+        .def_readwrite("white", &BitBoard::Boards::white)
         ;
 
     // Strategyクラスのバインディング

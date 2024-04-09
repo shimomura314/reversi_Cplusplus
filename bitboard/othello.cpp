@@ -37,7 +37,7 @@ void Othello::change_player(uint8_t color) {
     player_clr = color;
 }
 
-tuple<bool, bool> Othello::process_game() {
+std::tuple<bool, bool> Othello::process_game() {
     /*
     Process the game by updating the count, judging whether the game is over,
     and making a move by the player or the CPU, depending on whose turn it is.
@@ -50,19 +50,19 @@ tuple<bool, bool> Othello::process_game() {
     */
     update_count();
 
-    uint64_t b_board, w_board;
-    tie(b_board, w_board) = return_board();
+    BitBoard::Boards present_boards;
+    present_boards = return_board();
     uint8_t turn = return_turn();
 
-    result = judge_game(b_board, w_board);
+    result = judge_game(present_boards);
 
     if (result != 3) {
-        return forward_as_tuple(true, true);
+        return std::forward_as_tuple(true, true);
     }
 
-    if (!turn_playable(turn, b_board, w_board)) {
+    if (!turn_playable(turn, present_boards)) {
         skip_turn();
-        return forward_as_tuple(false, false);
+        return std::forward_as_tuple(false, false);
     }
 
     if ((player_clr != turn) || ((player_clr == turn) && (human_ai))) {
@@ -73,8 +73,8 @@ tuple<bool, bool> Othello::process_game() {
             uint64_t select = white_strategy -> move(*this);
             play_turn(select);
         }        
-        return forward_as_tuple(false, true);
+        return std::forward_as_tuple(false, true);
     } else {
-        return forward_as_tuple(false, false);
+        return std::forward_as_tuple(false, false);
     }
 }

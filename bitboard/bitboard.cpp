@@ -1,7 +1,8 @@
 #include "bitboard.h"
 
 BitBoard::BitBoard() {
-    board_log.emplace_back(0x0000000810000000, 0x0000001008000000);
+    board_log.emplace_back(
+        Boards{0x0000000810000000, 0x0000001008000000});
 }
 
 uint8_t BitBoard::bit_count(uint64_t x) {
@@ -83,8 +84,7 @@ uint64_t BitBoard::check_surround(uint64_t x, uint8_t direction) {
     return (x << 9) & 0xfefefefefefefe00;
 }
 
-tuple<uint8_t, uint8_t> BitBoard::count_disks(
-        uint64_t b_board, uint64_t w_board) {
+std::tuple<uint8_t, uint8_t> BitBoard::count_disks(BitBoard::Boards boards) {
     /*
     Counts the number of disks on the board for each player.
 
@@ -99,11 +99,12 @@ tuple<uint8_t, uint8_t> BitBoard::count_disks(
     Tuple[int, int]
         A tuple with the number of disks for the players, respectively.
     */
-    return forward_as_tuple(bit_count(b_board), bit_count(w_board));
+    return std::forward_as_tuple(
+        bit_count(boards.black), bit_count(boards.white));
 }
 
 uint64_t BitBoard::reversible_area(
-        uint8_t turn_, uint64_t b_board, uint64_t w_board) {
+        uint8_t turn_, BitBoard::Boards boards) {
     /*
     Calculate the reversible area of the board for the given turn.
 
@@ -120,8 +121,8 @@ uint64_t BitBoard::reversible_area(
     reversible : uint64_t
         The reversible area of the board for the given turn.
     */
-    uint64_t board[2] = {b_board, w_board};
-    uint64_t blank_board = ~(b_board | w_board);
+    uint64_t board[2] = {boards.black, boards.white};
+    uint64_t blank_board = ~(boards.black | boards.white);
     uint64_t horiz_brd = board[turn_ ^ 1] & 0x7e7e7e7e7e7e7e7e;
     uint64_t vert_brd = board[turn_ ^ 1] & 0x00ffffffffffff00;
     uint64_t all_border = board[turn_ ^ 1] & 0x007e7e7e7e7e7e00;
@@ -200,11 +201,10 @@ uint64_t BitBoard::reversible_area(
     return reversible;
 }
 
-vector<uint8_t> BitBoard::reversible_area_list(
-        uint8_t turn_, uint64_t b_board, uint64_t w_board) {
-    uint64_t reversible = reversible_area(turn_, b_board, w_board);
-    vector<uint8_t> candidates;
-
+std::vector<uint8_t> BitBoard::reversible_area_list(
+        uint8_t turn_, Boards boards) {
+    uint64_t reversible = reversible_area(turn_, boards);
+    std::vector<uint8_t> candidates;
     for (uint8_t i = 0; i < 64; ++i) {
         if (reversible & exp2[i]) {
             candidates.push_back(i);
@@ -214,7 +214,7 @@ vector<uint8_t> BitBoard::reversible_area_list(
 }
 
 bool BitBoard::is_reversible(
-        uint64_t put_loc, uint8_t turn_, uint64_t b_board, uint64_t w_board) {
+        uint64_t put_loc, uint8_t turn_, Boards boards) {
     /*
     Check if the put_loc is reversible for the given turn.
 
@@ -233,11 +233,10 @@ bool BitBoard::is_reversible(
     bool
         `True` if the put_loc is reversible, `False` otherwise.
     */
-    return (put_loc & reversible_area(turn_, b_board, w_board)) == put_loc;
+    return (put_loc & reversible_area(turn_, boards)) == put_loc;
 }
 
-bool BitBoard::turn_playable(
-        uint8_t turn_, uint64_t b_board, uint64_t w_board) {
+bool BitBoard::turn_playable(uint8_t turn_, Boards boards) {
     /*
     Return wheather you can put disk or not.
 
@@ -254,11 +253,11 @@ bool BitBoard::turn_playable(
     np.bool_
         True if the player has a valid move to make, False otherwise.
     */
-    return reversible_area(turn_, b_board, w_board) != 0;
+    return reversible_area(turn_, boards) != 0;
 
 }
 
-int BitBoard::judge_game(uint64_t b_board, uint64_t w_board) {
+int BitBoard::judge_game(Boards boards) {
     /*
     Determines the outcome of the game based on the current state of the board.
 
@@ -276,9 +275,9 @@ int BitBoard::judge_game(uint64_t b_board, uint64_t w_board) {
     */
     uint64_t black, white;
     uint8_t count_b, count_w;
-    black = reversible_area(0, b_board, w_board);
-    white = reversible_area(1, b_board, w_board);
-    tie(count_b, count_w) = count_disks(b_board, w_board);
+    black = reversible_area(0, boards);
+    white = reversible_area(1, boards);
+    std::tie(count_b, count_w) = count_disks(boards);
     if (black == 0 && white == 0) {
         if (count_b == count_w) {
             return 2;
@@ -291,7 +290,7 @@ int BitBoard::judge_game(uint64_t b_board, uint64_t w_board) {
     return 3;
 }
 
-tuple <uint64_t, uint64_t> BitBoard::return_board() const {
+BitBoard::Boards BitBoard::return_board() const {
     /*
     Returns the current board of the game.
 
@@ -300,7 +299,7 @@ tuple <uint64_t, uint64_t> BitBoard::return_board() const {
     board : tuple of uint64_t
         A tuple of the black board and white board.
     */
-    return forward_as_tuple(black_board, white_board);
+    return BitBoard::boards_state;
 }
 
 uint8_t BitBoard::return_turn() const {
@@ -331,7 +330,7 @@ uint8_t BitBoard::return_result() const {
     return result;
 }
 
-vector<vector<uint8_t>> BitBoard::display_board() const {
+std::array<int, 64> BitBoard::display_board() const {
     /*
     Calculate 2-dimensional arrays to be used for board display.
 
@@ -341,18 +340,20 @@ vector<vector<uint8_t>> BitBoard::display_board() const {
         A list of lists with dimensions 8 x 8 where 1 represents a black disk,
         -1 represents a white disk, and 0 represents an empty cell.
     */
+    BitBoard::Boards copied_boards = return_board();
     uint64_t b_board, w_board;
-    vector<vector<uint8_t>> board_list(8, vector<uint8_t>(8));
+    std::array<int, 64> board_list;
 
-    tie(b_board, w_board) = return_board();
+    b_board = copied_boards.black;
+    w_board = copied_boards.white;
     for (uint8_t i = 0; i < 8; ++i){
         for (uint8_t j = 0; j < 8; ++j){
             if (b_board & 1) {
-                board_list[i][j] = 0;
+                board_list[i + j*8] = 0;
             } else if (w_board & 1) {
-                board_list[i][j] = 1;
+                board_list[i + j*8] = 1;
             } else {
-                board_list[i][j] = 2;
+                board_list[i + j*8] = 2;
             }
             b_board = b_board >> 1;
             w_board = w_board >> 1;
@@ -361,7 +362,7 @@ vector<vector<uint8_t>> BitBoard::display_board() const {
     return board_list;
 }
 
-void BitBoard::load_board(uint64_t b_board, uint64_t w_board) {
+void BitBoard::load_board(Boards boards) {
     /*
     Updates the game board with the provided black and white board configurations.
 
@@ -374,8 +375,7 @@ void BitBoard::load_board(uint64_t b_board, uint64_t w_board) {
     -------
     None
     */
-    black_board = b_board;
-    white_board = w_board;
+    boards_state = boards;
 }
 
 void BitBoard::load_state() {
@@ -397,7 +397,7 @@ void BitBoard::load_state() {
     -------
     None
     */
-    load_board(status.GS_b_board, status.GS_w_board);
+    load_board({status.GS_b_board, status.GS_w_board});
     board_log = status.GS_board_log;
     board_back = status.GS_board_back;
 }
@@ -412,7 +412,7 @@ void BitBoard::save_state(){
         A tuple of the black board and white board.
     */
     status = {
-        black_board, white_board, board_log, board_back,
+        boards_state.black, boards_state.white, board_log, board_back,
     };
 }
 
@@ -427,7 +427,7 @@ bool BitBoard::undo_turn() {
         return false;
     }
 
-    std::pair<uint64_t, uint64_t> lastBoard;
+    BitBoard::Boards lastBoard;
 
     lastBoard = board_log.back();
     board_back.push_back(lastBoard);
@@ -436,7 +436,7 @@ bool BitBoard::undo_turn() {
     board_back.push_back(lastBoard);
     board_log.pop_back();
     lastBoard = board_log.back();
-    load_board(lastBoard.first, lastBoard.second);
+    load_board({lastBoard.black, lastBoard.white});
     return true;
 }
 
@@ -452,7 +452,7 @@ bool BitBoard::redo_turn() {
         return false;
     }
 
-    std::pair<uint64_t, uint64_t> lastBoard;
+    BitBoard::Boards lastBoard;
 
     lastBoard = board_back.back();
     board_log.push_back(lastBoard);
@@ -460,13 +460,12 @@ bool BitBoard::redo_turn() {
     lastBoard = board_back.back();
     board_log.push_back(lastBoard);
     board_back.pop_back();
-    load_board(lastBoard.first, lastBoard.second);
+    load_board({lastBoard.black, lastBoard.white});
     return true;
 }
 
-tuple<uint64_t, uint64_t> BitBoard::simulate_play(
-        uint8_t turn, uint64_t put_loc,
-        uint64_t b_board, uint64_t w_board) {
+BitBoard::Boards BitBoard::simulate_play(
+        uint8_t turn, uint64_t put_loc, Boards boards) {
     /*
 
     Simulates a play of Othello by updating the current board state.
@@ -487,7 +486,7 @@ tuple<uint64_t, uint64_t> BitBoard::simulate_play(
     tuple of uint64_t
         A tuple of updated black and white bitboards after the player's move.
     */
-    uint64_t board[2] = {b_board, w_board};
+    uint64_t board[2] = {boards.black, boards.white};
     uint64_t reverse_bit = 0;
     uint64_t reverse_bit_;
     uint64_t border_bit;
@@ -507,7 +506,7 @@ tuple<uint64_t, uint64_t> BitBoard::simulate_play(
     board[turn] ^= (put_loc | reverse_bit);
     board[turn ^ 1] ^= reverse_bit;
 
-    return forward_as_tuple(board[0], board[1]);
+    return {board[0], board[1]};
 }
 
 void BitBoard::play_turn(uint8_t put_loc) {
@@ -531,28 +530,28 @@ void BitBoard::play_turn(uint8_t put_loc) {
     None
     */
     if (put_loc > 63) {
-        throw out_of_range("put_loc must be between 0 and 63.");
+        throw std::out_of_range("put_loc must be between 0 and 63.");
     }
 
     // cdef uint64_t put_loc_ = 1i64 << put_loc
     uint64_t put_loc_ = exp2[put_loc];
-    uint64_t next_black_board, next_white_board;
+    BitBoard::Boards next_boards_state;
 
     // If input value is not valid, raise an error.
-    if (!is_reversible(put_loc_, turn, black_board, white_board)) {
-        throw invalid_argument("Move is not reversible.");
+    if (!is_reversible(put_loc_, turn, boards_state)) {
+        throw std::invalid_argument("Move is not reversible.");
     }
 
-    tie(next_black_board, next_white_board) = simulate_play(
-        turn, put_loc_, black_board, white_board);
+    next_boards_state = simulate_play(
+        turn, put_loc_, boards_state);
 
     // Update boards.
-    load_board(next_black_board, next_white_board);
+    load_board(next_boards_state);
     pass_cnt[turn] = 0;
     turn ^= 1;
 
     // Update log
-    board_log.push_back(std::make_pair(next_black_board, next_white_board));
+    board_log.push_back(next_boards_state);
     board_back.clear();
 }
 
@@ -573,7 +572,7 @@ void BitBoard::update_count() {
             The number of disks for the opponent.
     */
     uint8_t cnt_black, cnt_white;
-    tie(cnt_black, cnt_white) = count_disks(black_board, white_board);
+    std::tie(cnt_black, cnt_white) = count_disks(boards_state);
     count_black = cnt_black;
     count_white = cnt_white;
 }
@@ -588,8 +587,4 @@ void BitBoard::auto_mode(bool automode) {
         Automatic mode on/off flag, by default True
     */
     human_ai = automode;
-}
-
-void test() {
-    
 }

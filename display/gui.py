@@ -197,14 +197,14 @@ class GamePanel(wx.Panel):
         self._square.draw(self._buffer_DC, self._line_position)
         for row in range(8):
             for column in range(8):
-                if self._board[row][column] == 0:
+                if self._board[row + column*8] == 0:
                     self._disks[row][column].draw(
                         cp.CLR_BLACK_DISK,
                         self._buffer_DC,
                         self._position[row][column],
                         self._DISK_SIZE,
                         )
-                elif self._board[row][column] == 1:
+                elif self._board[row + column*8] == 1:
                     self._disks[row][column].draw(
                         cp.CLR_WHITE_DISK,
                         self._buffer_DC,
@@ -273,8 +273,8 @@ class UserPanel(wx.Panel):
 
     def on_timer(self, event):
         """Determine disks' position and draw area."""
-        b_board, w_board = self._frame.othello.return_board()
-        black, white = self._frame.othello.count_disks(b_board, w_board)
+        present_boards = self._frame.othello.return_board()
+        black, white = self._frame.othello.count_disks(present_boards)
         if self._frame.othello.return_player_clr() == 0:
             player, opponent = black, white
         else:
