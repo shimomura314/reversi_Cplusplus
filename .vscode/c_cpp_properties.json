@@ -5,7 +5,9 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:/Users/shimomura/anaconda3/lib/site-packages/pybind11/include",
-                "C:/Users/shimomura/anaconda3/include"
+                "C:/Users/shimomura/anaconda3/include",
+                "C:/m/Programs/emsdk",
+                "C:/m/Programs/emsdk/upstream/emscripten/system/include",
             ],
             "defines": [
                 "_DEBUG",
