@@ -1,5 +1,7 @@
 *.pkl
 *.prof
 *.o
+.vs
+/out
 __pycache__
 /build
