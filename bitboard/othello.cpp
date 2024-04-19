@@ -78,3 +78,7 @@ std::tuple<bool, bool> Othello::process_game() {
         return std::forward_as_tuple(false, false);
     }
 }
+
+int main(){
+    return 0;
+}
