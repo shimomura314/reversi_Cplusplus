@@ -8,10 +8,17 @@ CFLAGS = -Wall -Wextra -Werror
 all: matching
 
 # 各ターゲットのビルドツール
-SRCS_matching    =  $(wildcard bitboard/*.cpp strategy/*.cpp matching/*.cpp)
-OBJS_matching    =  $(SRCS_matching:.cpp=.o)
-matching: $(OBJS_matching)
+SRCS_othello   = $(wildcard bitboard/*.cpp strategy/*.cpp)
+OBJS_othello   = $(SRCS_othello:.cpp=.o)
+LIBDIR = -LC:/Users/shimomura/anaconda3/libs
+LIBS   = -lpython39
+othello: $(OBJS_othello)
 	$(CC) -o $@ $^ $(LIBDIR) $(LIBS)
+
+# SRCS_matching    =  $(wildcard bitboard/*.cpp strategy/*.cpp matching/*.cpp)
+# OBJS_matching    =  $(SRCS_matching:.cpp=.o)
+# matching: $(OBJS_matching)
+# 	$(CC) -o $@ $^ $(LIBDIR) $(LIBS)
 # -p: prof用．ファイル実行時にmon.outが生成される．
 # prof matching.exe > mon.txt
 # matching: $(OBJS_matching)
@@ -29,4 +36,4 @@ INCDIR  += -IC:/Users/shimomura/anaconda3/include
 
 # 'clean' ターゲットの定義
 clean:
-	-rm -f $(OBJS_matching) othello matching
+	-rm -f $(OBJS_othello) othello matching
