@@ -1,6 +1,5 @@
 """This file defines menu bar."""
 
-import copy
 import random
 import wx
 

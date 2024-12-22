@@ -1,5 +1,3 @@
-"""This is a GUI to display the board of Reversi."""
-
 import copy
 from logging import getLogger
 import wx
